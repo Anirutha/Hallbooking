@@ -24,7 +24,7 @@ const hallData = [
       amenities: ["Ac", "chairs", "discolights"],
       price: 5000,
       ifBooked: "false",
-      customerName: "Vidhya",
+      customerName: "",
       date: "",
       startTime: "",
       endTime: "",
@@ -37,7 +37,7 @@ const hallData = [
       amenities: ["Ac", "chairs"],
       price: 3000,
       ifBooked: "false",
-      customerName: "Suresh",
+      customerName: "",
       date: "",
       startTime: "",
       endTime: "",
@@ -83,26 +83,21 @@ app.get("/hall-details",(req,res)=>{
 
 //Question 2:Booking a Room with:
 
-app.put("/hall-details/:id", (req, res) => {
+app.put("/edit/hall-details/:id", (req, res) => {
     const { id } = req.params;
-    const halls = hallData.find((hall) => hall.id === id);
-     if (halls[0].ifBooked === "true") {
-      res.status(400).send("Hey this room is already booked");
-      return;
-    } else halls.customerName = req.body.customerName;
-    halls.date = req.body.date;
-    halls.startTime = req.body.startTime;
-    halls.endTime = req.body.endTime;
-    halls.RoomId=req.body.RoomId;
-    res.send(halls);
-  });
+    let filteredHall = hallData.filter((hall) => hall.id === id)
+     if (filteredHall[0].ifBooked === "true") {
+      return res.status(400).send("Hey this room is already booked");
+      }
+      return res.send(filteredHall); 
+});
   
   //Question 3: List all Rooms with booked data with:
   //Ans:
-  app.get("/hall-details", (request, response) => {
+  app.get("/hall-details/rooms", (request, response) => {
     const { ifBooked, numberOfSeats } = request.query;
-    console.log(request.query, ifBooked);
-    console.log(request.query, numberOfSeats);
+    //console.log(request.query, ifBooked);
+    //console.log(request.query, numberOfSeats);
     let filteredHall = hallData;
     if (ifBooked) {
       filteredHall = filteredHall.filter((halls) => halls.ifBooked === ifBooked);
@@ -114,15 +109,24 @@ app.put("/hall-details/:id", (req, res) => {
     }
     response.send(filteredHall);
   });
- //Question 4:  List all customers with booked data with:
-//Ans:
-app.get("/hall-details/:id", (request, response) => {
-    
-    const { id } = request.params;
-    console.group(id);
-    const halls = hallData.find((hall) => hall.id === id);
-    response.send(halls);
+  //Question 4:  List all customers with booked data with:
+  //Ans:
+  app.get("/hall-details/customers", (request, response) => {
+    const { ifBooked, numberOfSeats } = request.query;
+    //console.log(request.query, ifBooked);
+    //console.log(request.query, numberOfSeats);
+    let filteredHall = hallData;
+    if (ifBooked) {
+      filteredHall = filteredHall.filter((halls) => halls.ifBooked === ifBooked);
+    }
+    if (numberOfSeats) {
+      filteredHall = filteredHall.filter(
+        (halls) => halls.numberOfSeats >= +numberOfSeats
+      );
+    }
+    response.send(filteredHall);
   });
+
   //Question 5: List how many times a customer has booked the room with below details:
  //Ans:
  app.get("/hall-details",(req,res)=>{
